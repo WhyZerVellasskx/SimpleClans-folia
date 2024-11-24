@@ -41,13 +41,13 @@ public class InventoryDrawer {
             return;
 	}
 	OPENING.put(uuid, frame);
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+        SimpleClans.getScheduler().execute(() -> {
 	    Inventory inventory = prepareInventory(frame);
 
             if (!frame.equals(OPENING.get(uuid))) {
                 return;
             }
-            Bukkit.getScheduler().runTask(plugin, () -> {
+            SimpleClans.getScheduler().execute(() -> {
                 frame.getViewer().openInventory(inventory);
                 InventoryController.register(frame);
                 OPENING.remove(uuid);
@@ -122,7 +122,7 @@ public class InventoryDrawer {
     }
 
     private static void runHelpCommand(@NotNull Player player) {
-        Bukkit.getScheduler().runTask(plugin, () -> plugin.getServer().getConsoleSender().sendMessage(lang("gui.not.supported")));
+        SimpleClans.getScheduler().execute(() -> plugin.getServer().getConsoleSender().sendMessage(lang("gui.not.supported")));
         SettingsManager settingsManager = plugin.getSettingsManager();
         settingsManager.set(ENABLE_GUI, false);
         String commandClan = settingsManager.getString(COMMANDS_CLAN);

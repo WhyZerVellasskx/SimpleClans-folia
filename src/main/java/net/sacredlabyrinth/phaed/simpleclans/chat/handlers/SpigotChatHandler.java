@@ -2,10 +2,12 @@ package net.sacredlabyrinth.phaed.simpleclans.chat.handlers;
 
 import net.sacredlabyrinth.phaed.simpleclans.ChatBlock;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
+import net.sacredlabyrinth.phaed.simpleclans.SimpleClans;
 import net.sacredlabyrinth.phaed.simpleclans.chat.ChatHandler;
 import net.sacredlabyrinth.phaed.simpleclans.chat.SCMessage;
 import net.sacredlabyrinth.phaed.simpleclans.events.ChatEvent;
 import net.sacredlabyrinth.phaed.simpleclans.utils.ChatUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import static net.sacredlabyrinth.phaed.simpleclans.chat.SCMessage.Source.*;
@@ -18,34 +20,37 @@ public class SpigotChatHandler implements ChatHandler {
 
     @Override
     public void sendMessage(SCMessage message) {
-        /*
-          TODO: Make it async, change Type to Channel in 3.0
-        */
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                ChatEvent event = new ChatEvent(message.getContent(), message.getSender(), message.getReceivers(),
-                        ChatEvent.Type.valueOf(message.getChannel().name()));
+    /*
+      TODO: Make it async, change Type to Channel in 3.0
+    */
+        SimpleClans.getScheduler().execute(() -> {
+            ChatEvent event = new ChatEvent(
+                    message.getContent(),
+                    message.getSender(),
+                    message.getReceivers(),
+                    ChatEvent.Type.valueOf(message.getChannel().name())
+            );
 
-                getPluginManager().callEvent(event);
-                if (event.isCancelled()) {
-                    return;
-                }
-                message.setContent(stripColorsAndFormatsPerPermission(message.getSender(),event.getMessage()));
-
-                ConfigField configField = ConfigField.valueOf(String.format("%sCHAT_FORMAT",
-                        message.getSource() == DISCORD ? "DISCORD" : message.getChannel()));
-
-                String format = settingsManager.getString(configField);
-                String formattedMessage = chatManager.parseChatFormat(format, message, event.getPlaceholders());
-
-                plugin.getLogger().info(ChatUtils.stripColors(formattedMessage));
-
-                for (ClanPlayer cp : message.getReceivers()) {
-                    ChatBlock.sendMessage(cp, formattedMessage);
-                }
+            Bukkit.getPluginManager().callEvent(event);
+            if (event.isCancelled()) {
+                return;
             }
-        }.runTask(plugin);
+
+            message.setContent(stripColorsAndFormatsPerPermission(message.getSender(), event.getMessage()));
+
+            ConfigField configField = ConfigField.valueOf(
+                    String.format("%sCHAT_FORMAT", message.getSource() == DISCORD ? "DISCORD" : message.getChannel())
+            );
+
+            String format = settingsManager.getString(configField);
+            String formattedMessage = chatManager.parseChatFormat(format, message, event.getPlaceholders());
+
+            plugin.getLogger().info(ChatUtils.stripColors(formattedMessage));
+
+            for (ClanPlayer cp : message.getReceivers()) {
+                ChatBlock.sendMessage(cp, formattedMessage);
+            }
+        });
     }
 
     private String stripColorsAndFormatsPerPermission(ClanPlayer sender, String message) {

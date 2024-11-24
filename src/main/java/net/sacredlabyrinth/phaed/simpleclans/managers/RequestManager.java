@@ -442,27 +442,24 @@ public final class RequestManager {
      * Starts the task that asks for the votes of all requests
      */
     public void askerTask() {
-        new BukkitRunnable() {
+        SimpleClans.getScheduler().runTaskTimerAsynchronously(() -> {
+            for (Iterator<Map.Entry<String, Request>> iter = requests.entrySet().iterator(); iter.hasNext(); ) {
+                Request req = iter.next().getValue();
 
-            @Override
-            public void run() {
-                for (Iterator<Map.Entry<String, Request>> iter = requests.entrySet().iterator(); iter.hasNext(); ) {
-                    Request req = iter.next().getValue();
-
-                    if (req == null) {
-                        continue;
-                    }
-
-                    if (req.reachedRequestLimit()) {
-                        iter.remove();
-                    }
-
-                    ask(req);
-                    req.incrementAskCount();
+                if (req == null) {
+                    continue;
                 }
+
+                if (req.reachedRequestLimit()) {
+                    iter.remove();
+                }
+
+                ask(req);
+                req.incrementAskCount();
             }
-        }.runTaskTimerAsynchronously(plugin, 0, plugin.getSettingsManager().getSeconds(REQUEST_FREQUENCY));
+        }, 0L, plugin.getSettingsManager().getSeconds(REQUEST_FREQUENCY) * 20L);
     }
+
 
     /**
      * Asks a request to players for votes
@@ -488,6 +485,6 @@ public final class RequestManager {
             }
         }
 
-        Bukkit.getScheduler().runTask(plugin, () -> Bukkit.getPluginManager().callEvent(new RequestEvent(req)));
+        SimpleClans.getScheduler().execute(() -> Bukkit.getPluginManager().callEvent(new RequestEvent(req)));
     }
 }

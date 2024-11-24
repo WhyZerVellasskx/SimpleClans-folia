@@ -16,7 +16,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -723,26 +722,15 @@ public final class StorageManager {
      */
     @Deprecated
     public void updateClanAsync(final Clan clan) {
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                updateClan(clan);
-            }
-        }.runTaskAsynchronously(plugin);
+        SimpleClans.getScheduler().execute(() -> updateClan(clan));
     }
-
     /**
      * Change the name of a player in the database asynchronously
      *
      * @param cp to update
      */
     public void updatePlayerNameAsync(final @NotNull ClanPlayer cp) {
-    	new BukkitRunnable() {
-			@Override
-			public void run() {
-                updatePlayerName(cp);
-			}
-		}.runTaskAsynchronously(plugin);
+        SimpleClans.getScheduler().execute(() -> updatePlayerName(cp));
     }
 
     /**
@@ -848,12 +836,7 @@ public final class StorageManager {
      */
     @Deprecated
     public void updateClanPlayerAsync(final ClanPlayer cp) {
-    	new BukkitRunnable() {
-			@Override
-			public void run() {
-                updateClanPlayer(cp);
-			}
-		}.runTaskAsynchronously(plugin);
+        SimpleClans.getScheduler().execute(() -> updateClanPlayer(cp));
     }
 
     /**
@@ -1037,26 +1020,14 @@ public final class StorageManager {
      * @param callback the callback
      */
     public void getMostKilled(DataCallback<Map<String, Integer>> callback) {
-    	new BukkitRunnable() {
-
-			@Override
-			public void run() {
-				callback.onResultReady(getMostKilled());
-			}
-		}.runTaskAsynchronously(plugin);
+        SimpleClans.getScheduler().execute(() -> callback.onResultReady(getMostKilled()));
     }
 
     /**
-     * Gets, asynchronously, a map of victim-{@literal >}count of all kills that specific player did and notifies via callback when it's ready
-     *
+     * Gets, asynchronously, a map of victim->count of all kills that specific player did and notifies via callback when it's ready.
      */
     public void getKillsPerPlayer(final String playerName, final DataCallback<Map<String, Integer>> callback) {
-    	new BukkitRunnable() {
-			@Override
-			public void run() {
-				callback.onResultReady(getKillsPerPlayer(playerName));
-			}
-		}.runTaskAsynchronously(plugin);
+        SimpleClans.getScheduler().execute(() -> callback.onResultReady(getKillsPerPlayer(playerName)));
     }
 
     /**

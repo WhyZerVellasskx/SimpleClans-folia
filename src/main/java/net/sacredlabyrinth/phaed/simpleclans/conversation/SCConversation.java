@@ -48,7 +48,9 @@ public class SCConversation extends Conversation {
     }
 
     public void addConversationCanceller(@NotNull ConversationCanceller canceller) {
+        System.out.println("1");
         canceller.setConversation(this);
-        cancellers.add(canceller);
+        System.out.println("2");
+        cancellers.add(canceller); //пиздец - 3 часа жизни в пустую ебал я рот эту конверсацию (кто хочет переделайте) (здесь нужно исправить только ее)
     }
 }

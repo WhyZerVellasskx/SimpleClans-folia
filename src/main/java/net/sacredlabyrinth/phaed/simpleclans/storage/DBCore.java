@@ -112,7 +112,7 @@ public interface DBCore {
             }
         };
         if (plugin.getSettingsManager().is(ConfigField.PERFORMANCE_USE_THREADS)) {
-            Bukkit.getScheduler().runTaskAsynchronously(plugin, executeUpdate);
+            SimpleClans.getScheduler().execute(executeUpdate);
         } else {
             executeUpdate.run();
         }

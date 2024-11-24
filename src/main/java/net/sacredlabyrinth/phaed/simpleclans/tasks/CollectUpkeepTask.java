@@ -18,7 +18,7 @@ import static net.sacredlabyrinth.phaed.simpleclans.managers.SettingsManager.Con
  *
  * @author roinujnosde
  */
-public class CollectUpkeepTask extends BukkitRunnable {
+public class CollectUpkeepTask {
 	private final SimpleClans plugin;
 	private final SettingsManager settingsManager;
 	
@@ -35,13 +35,12 @@ public class CollectUpkeepTask extends BukkitRunnable {
     	int minute = settingsManager.getInt(TASKS_COLLECT_UPKEEP_MINUTE);
         long delay = Helper.getDelayTo(hour, minute);
 
-        this.runTaskTimer(plugin, delay * 20, 86400 * 20);
+        SimpleClans.getScheduler().runTaskTimerAsynchronously((Runnable) this, delay * 20, 86400 * 20);
     }
 
     /**
      * (used internally)
      */
-    @Override
     public void run() {
     	if (plugin == null) {
     		throw new IllegalStateException("Use the start() method!");

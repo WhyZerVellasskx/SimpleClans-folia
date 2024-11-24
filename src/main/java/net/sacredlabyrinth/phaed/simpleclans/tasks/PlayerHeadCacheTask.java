@@ -7,14 +7,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
-public class PlayerHeadCacheTask extends BukkitRunnable {
+public class PlayerHeadCacheTask {
 
     private final SimpleClans plugin;
 
@@ -27,10 +26,10 @@ public class PlayerHeadCacheTask extends BukkitRunnable {
      */
     public void start() {
         int hour = 3600;
-        this.runTaskTimerAsynchronously(plugin, 0, (hour + 60) * 20);
+        long delay = (hour + 60) * 20L;
+        SimpleClans.getScheduler().runTaskTimer(this::run, 0L, delay);
     }
 
-    @Override
     public void run() {
         plugin.getLogger().info("Caching player heads...");
         long begin = System.currentTimeMillis();
@@ -54,5 +53,10 @@ public class PlayerHeadCacheTask extends BukkitRunnable {
         }
         plugin.getLogger().info(String.format("Finished caching heads! It took %d milliseconds...",
                 System.currentTimeMillis() - begin));
+    }
+
+    private boolean isCancelled() {
+        // Return whether the task has been cancelled (implement as needed)
+        return false;
     }
 }

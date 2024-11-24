@@ -1,6 +1,8 @@
 package net.sacredlabyrinth.phaed.simpleclans;
 
 import co.aikar.commands.BukkitCommandIssuer;
+import com.github.Anon8281.universalScheduler.UniversalScheduler;
+import com.github.Anon8281.universalScheduler.scheduling.schedulers.TaskScheduler;
 import net.sacredlabyrinth.phaed.simpleclans.commands.SCCommandManager;
 import net.sacredlabyrinth.phaed.simpleclans.hooks.papi.SimpleClansExpansion;
 import net.sacredlabyrinth.phaed.simpleclans.language.LanguageResource;
@@ -46,6 +48,7 @@ import static org.bukkit.Bukkit.getPluginManager;
 public class SimpleClans extends JavaPlugin {
 
     private final ArrayList<String> messages = new ArrayList<>();
+    private static TaskScheduler scheduler;
 
     private static SimpleClans instance;
     private static LanguageResource languageResource;
@@ -99,6 +102,7 @@ public class SimpleClans extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
+        scheduler = UniversalScheduler.getScheduler(this);
         new LanguageMigration(this).migrate();
         settingsManager = new SettingsManager(this);
         new BbMigration(settingsManager);
@@ -203,6 +207,10 @@ public class SimpleClans extends JavaPlugin {
         getStorageManager().closeConnection();
         getPermissionsManager().savePermissions();
         getSettingsManager().loadAndSave();
+    }
+
+    public static TaskScheduler getScheduler() {
+        return scheduler;
     }
 
     /**

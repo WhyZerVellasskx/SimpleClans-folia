@@ -89,6 +89,7 @@ public class GeneralCommands extends BaseCommand {
         initialData.put(NAME_KEY, name);
         SCConversation conversation = new SCConversation(plugin, player, new CreateClanTagPrompt(), initialData);
         conversation.addConversationCanceller(new RequestCanceller(player, RED + lang("clan.create.request.cancelled", player)));
+        //пиздец - 3 часа жизни в пустую ебал я рот эту конверсацию (кто хочет переделайте) (здесь нужно исправить только ее)
         conversation.begin();
     }
 

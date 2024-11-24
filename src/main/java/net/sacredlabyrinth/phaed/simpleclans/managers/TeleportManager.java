@@ -151,7 +151,7 @@ public final class TeleportManager {
     }
 
     private void startCounter() {
-        plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
+        SimpleClans.getScheduler().scheduleSyncRepeatingTask(() -> {
             waitingPlayers.values().removeIf(ts -> ts.getPlayer() == null);
             for (Iterator<TeleportState> iter = waitingPlayers.values().iterator(); iter.hasNext(); ) {
                 TeleportState state = iter.next();
